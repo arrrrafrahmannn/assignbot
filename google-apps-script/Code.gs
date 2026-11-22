@@ -3,7 +3,7 @@
  * All helper functions end in _ so visitors cannot invoke them through RPC.
  * No read/list/download endpoint is exposed. Uploads inherit the folder permissions.
  */
-var ALLOWED_ORIGINS=['http://127.0.0.1:4173','http://localhost:5173','http://localhost:3000'];
+var ALLOWED_ORIGINS=['https://assignbottttt.github.io','http://127.0.0.1:4173','http://localhost:5173','http://localhost:3000'];
 function doGet(e){
  var origin=String(e&&e.parameter&&e.parameter.origin||''),channel=String(e&&e.parameter&&e.parameter.channel||'');
  if(ALLOWED_ORIGINS.indexOf(origin)<0||!/^[-a-f0-9]{36}$/i.test(channel))return HtmlService.createHtmlOutput('ASSIGNBOT upload connection. Open the ASSIGNBOT website to submit a brief.');
