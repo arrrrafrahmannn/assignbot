@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8"><title>ASSIGNBOT upload connection</title></head><body><script>
+(function(){
+ 'use strict';
+ const origin=<?!= originJson ?>;
+ const channel=<?!= channelJson ?>;
+ let busy=false;
+ function send(value){window.top.postMessage(Object.assign({service:'assignbot',channel:channel},value),origin);}
+ window.addEventListener('message',function(event){
+  const data=event.data;
+  if(event.origin!==origin||event.source!==window.top||!data||data.service!=='assignbot'||data.channel!==channel||data.type!=='submit'||typeof data.id!=='string')return;
+  if(busy){send({type:'error',id:data.id});return;}
+  busy=true;
+  google.script.run.withSuccessHandler(function(result){busy=false;send({type:'result',id:data.id,result:result});}).withFailureHandler(function(){busy=false;send({type:'error',id:data.id});}).submitBrief(data.payload);
+ });
+ send({type:'ready'});
+})();
+</script></body></html>
