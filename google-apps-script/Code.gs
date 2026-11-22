@@ -3,7 +3,7 @@
  * All helper functions end in _ so visitors cannot invoke them through RPC.
  * No read/list/download endpoint is exposed. Uploads inherit the folder permissions.
  */
-var ALLOWED_ORIGINS=['https://arrrrafrahmannn.github.io','http://127.0.0.1:4173','http://localhost:5173'];
+var ALLOWED_ORIGINS=['http://127.0.0.1:4173','http://localhost:5173','http://localhost:3000'];
 function doGet(e){
  var origin=String(e&&e.parameter&&e.parameter.origin||''),channel=String(e&&e.parameter&&e.parameter.channel||'');
  if(ALLOWED_ORIGINS.indexOf(origin)<0||!/^[-a-f0-9]{36}$/i.test(channel))return HtmlService.createHtmlOutput('ASSIGNBOT upload connection. Open the ASSIGNBOT website to submit a brief.');
@@ -36,7 +36,7 @@ function submitBrief(data){
   lock=LockService.getScriptLock();if(!lock.tryLock(30000))return result_({ok:false,code:'BUSY'});
   var sheet=sheet_();
   if(sheet.getLastRow()>1){var match=sheet.getRange(2,10,sheet.getLastRow()-1,1).createTextFinder(data.requestId).matchEntireCell(true).findNext();if(match){var prior=sheet.getRange(match.getRow(),1,1,10).getValues()[0];return result_({ok:true,submissionId:prior[0],receivedAt:new Date(prior[1]).toISOString()});}}
-  var today=Utilities.formatDate(new Date(),'Asia/Dhaka','yyyy-MM-dd');var dailyKey='daily_'+today;var daily=Number(props.getProperty(dailyKey)||0);if(daily>=200)return result_({ok:false,code:'DAILY_LIMIT'});
+  var today=Utilities.formatDate(new Date(),'UTC','yyyy-MM-dd');var dailyKey='daily_'+today;var daily=Number(props.getProperty(dailyKey)||0);if(daily>=200)return result_({ok:false,code:'DAILY_LIMIT'});
   if(data.channel==='whatsapp'&&(data.contact.replace(/\D/g,'').length<8||data.contact.replace(/\D/g,'').length>15))return result_({ok:false,code:'INVALID_CONTACT'});
   // Increment under the lock. Gaps after a failed upload are intentional; numbers are never reused.
   var previous=sheet.getLastRow()>1?String(sheet.getRange(sheet.getLastRow(),1,1,1).getValues()[0][0]):'';

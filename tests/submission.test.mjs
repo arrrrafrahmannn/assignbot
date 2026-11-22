@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {validateSubmission,MAX_FILE_BYTES} from '../src/validation.mjs';
 const content=Buffer.from('%PDF-1.4\nassignment brief');
-const make=(extra={})=>({requestId:'12345678-1234-1234-1234-123456789012',anonymous:false,name:'Student',channel:'whatsapp',contact:'+880 1712345678',requirements:'MLA 9, 1400 words',website:'',file:{name:'Brief.pdf',size:content.length,base64:content.toString('base64')},...extra});
+const make=(extra={})=>({requestId:'12345678-1234-1234-1234-123456789012',anonymous:false,name:'Student',channel:'whatsapp',contact:'+1 5551234567',requirements:'MLA 9, 1400 words',website:'',file:{name:'Brief.pdf',size:content.length,base64:content.toString('base64')},...extra});
 test('accepts a real PDF and normalizes MIME independently of client',()=>{const d=validateSubmission(make());assert.equal(d.ok,true);assert.equal(d.data.file.type,'application/pdf')});
 test('anonymous mode strips supplied names and needs Gmail',()=>{const d=validateSubmission(make({anonymous:true,name:'DO NOT KEEP',channel:'gmail',contact:'student@gmail.com'}));assert.equal(d.ok,true);assert.equal(d.data.name,'');assert.equal(validateSubmission(make({anonymous:true})).ok,false)});
 test('rejects unsupported files, forged extension and mismatched size',()=>{assert.equal(validateSubmission(make({file:{name:'x.exe',size:content.length,base64:content.toString('base64')}})).ok,false);const fake=Buffer.from('not a PDF');assert.equal(validateSubmission(make({file:{name:'x.pdf',size:fake.length,base64:fake.toString('base64')}})).ok,false);const input=make();input.file.size++;assert.equal(validateSubmission(input).ok,false)});
